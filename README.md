@@ -7,14 +7,14 @@
 | Dataset | Cora | Citeseer | Pubmed |
 | :-: | :-: | :-: | :-: |
 | DAGNN | 84.4 ± 0.5 | 73.3 ± 0.6 | 80.5 ± 0.5 |
-| DGL | 84.4 ± 0.5 | 84.4 ± 0.5 | 84.4 ± 0.5 |
+| DGL | 84.3 ± 0.6 | 73.5 ± 0.8 | 80.5 ± 0.3 |
 
 #### On Arxiv
 ##### Accuracy
 | Dataset | Arxiv |
 | :-: | :-: |
-| DAGNN | 84.4 ± 0.5 |
-| DGL | 84.4 ± 0.5 |
+| DAGNN | 72.09 ± 0.25 |
+| DGL | 72.56 ± 0.19 |
 
 
 #### On Gowalla, Yelp2018 and Amanzon-Book
@@ -25,10 +25,10 @@ Gowalla, Yelp2018 and Amanzon-Book are datasets in the filed of recommendation s
 | Dataset | Gowalla | Yelp2018 | Amanzon-Book |
 | :-: | :-: | :-: | :-: |
 | NGCF | 0.1556 | 0.0543 | 0.0313 |
-| DAGNN(DGL) | 0.1792 |  |  |
+| DAGNN(DGL) | 0.1792 | 0.0588 | 0.0396 |
 
 ##### NDCG
 | Dataset | Gowalla | Yelp2018 | Amanzon-Book |
 | :-: | :-: | :-: | :-: |
 | NGCF | 0.1327 | 0.0477 | 0.0263 |
-| DAGNN(DGL) | 0.1507 |  |  |
+| DAGNN(DGL) | 0.1507 | 0.0483 | 0.0305 |
