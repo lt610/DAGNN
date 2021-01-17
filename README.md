@@ -19,14 +19,16 @@
 
 #### On Gowalla, Yelp2018 and Amanzon-Book
 
+Gowalla, Yelp2018 and Amanzon-Book are datasets in the filed of recommendation systems, which are introduced in paper [Neural Graph Collaborative Filtering](https://arxiv.org/abs/1905.08108v1)
+
 ##### Recall
 | Dataset | Gowalla | Yelp2018 | Amanzon-Book |
 | :-: | :-: | :-: | :-: |
 | NGCF | 0.1556 | 0.0543 | 0.0313 |
-| DAGNN(DGL) |  |  |  |
+| DAGNN(DGL) | 0.1792 |  |  |
 
 ##### NDCG
 | Dataset | Gowalla | Yelp2018 | Amanzon-Book |
 | :-: | :-: | :-: | :-: |
-| Accuracy(DAGNN) |  |  |  |
-| Accuracy(DGL) |  |  | 84.4 ± 0.5 |
+| NGCF | 0.1327 | 0.0477 | 0.0263 |
+| DAGNN(DGL) | 0.1507 |  |  |
