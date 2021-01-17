@@ -1,27 +1,13 @@
 import argparse
-import math
-
-import dgl
-import torch as torch
 from torch import nn
 from torch.nn import Parameter
 import dgl.function as fn
 from torch.nn import functional as F
 from dgl.data import CoraGraphDataset, CiteseerGraphDataset, PubmedGraphDataset
-from ogb.nodeproppred import DglNodePropPredDataset
-import os
-import re
-import networkx as nx
 import numpy as np
-import scipy.sparse as sp
 import torch
-from dgl import DGLGraph
-from sklearn.model_selection import ShuffleSplit
-import pickle as pkl
-import sys
 from tqdm import trange
-
-from utils import generate_random_seeds, set_random_state
+from utils import generate_random_seeds, set_random_state, evaluate
 
 
 class DAGNNConv(nn.Module):
@@ -197,11 +183,12 @@ def main(args):
     model = model.to(device)
 
     # Step 3: Create training components ===================================================== #
-    loss_fn = nn.CrossEntropyLoss()
+    loss_fn = F.cross_entropy
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.lamb)
 
     # Step 4: training epoches =============================================================== #
     loss = None
+    best_acc = None
     no_improvement = 0
     epochs = trange(args.epochs, desc='Accuracy & Loss')
 
@@ -212,7 +199,6 @@ def main(args):
 
         # compute loss
         train_loss = loss_fn(logits[train_idx], labels[train_idx])
-        train_acc = torch.sum(logits[train_idx].argmax(dim=1) == labels[train_idx]).item() / len(train_idx)
 
         # backward
         opt.zero_grad()
@@ -220,11 +206,8 @@ def main(args):
         opt.step()
 
         # Validation using a full graph
-        model.eval()
-
-        with torch.no_grad():
-            valid_loss = loss_fn(logits[val_idx], labels[val_idx])
-            valid_acc = torch.sum(logits[val_idx].argmax(dim=1) == labels[val_idx]).item() / len(val_idx)
+        train_loss, train_acc, valid_loss, valid_acc, test_loss, test_acc = evaluate(model, graph, feats, labels,
+                                                                                     (train_idx, val_idx, test_idx))
 
         # Print out performance
         epochs.set_description('Train Acc {:.4f} | Train Loss {:.4f} | Val Acc {:.4f} | Val loss {:.4f}'.format(
@@ -232,6 +215,7 @@ def main(args):
 
         if loss is None:
             loss = valid_loss
+            best_acc = test_acc
         else:
             if valid_loss > loss:
                 no_improvement += 1
@@ -241,13 +225,11 @@ def main(args):
             else:
                 no_improvement = 0
                 loss = valid_loss
+                best_acc = test_acc
 
-    model.eval()
-    logits = model(graph, feats)
-    test_acc = torch.sum(logits[test_idx].argmax(dim=1) == labels[test_idx]).item() / len(test_idx)
+    print("Test Acc {:.4f}".format(best_acc))
+    return best_acc
 
-    print("Test Acc {:.4f}".format(test_acc))
-    return test_acc
 
 if __name__ == "__main__":
     """
@@ -259,6 +241,7 @@ if __name__ == "__main__":
     # cuda params
     parser.add_argument('--gpu', type=int, default=0, help='GPU index. Default: -1, using CPU.')
     # training params
+    parser.add_argument('--runs', type=int, default=1, help='Training runs.')
     parser.add_argument('--epochs', type=int, default=1500, help='Training epochs.')
     parser.add_argument('--early-stopping', type=int, default=100, help='Patient epochs to wait before early stopping.')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate.')
@@ -273,16 +256,16 @@ if __name__ == "__main__":
     print(args)
 
     acc_lists = []
-    random_seeds = generate_random_seeds(1222, 1)
+    random_seeds = generate_random_seeds(seed=1222, nums=args.runs)
 
-    for run in range(1):
+    for run in range(args.runs):
         set_random_state(random_seeds[run])
         acc_lists.append(main(args))
 
     acc_lists = np.array(acc_lists)
 
-    mean = np.around(np.mean(acc_lists, axis=0), decimals=3)
-    std = np.around(np.std(acc_lists, axis=0), decimals=3)
+    mean = np.around(np.mean(acc_lists, axis=0), decimals=4)
+    std = np.around(np.std(acc_lists, axis=0), decimals=4)
 
     print('Total acc: ', acc_lists)
     print('mean', mean)

@@ -1,6 +1,19 @@
 import numpy as np
-import torch
 import random
+from torch.nn import functional as F
+import torch
+
+
+def evaluate(model, graph, feats, labels, idxs):
+    model.eval()
+    with torch.no_grad():
+        logits = model(graph, feats)
+        results = ()
+        for idx in idxs:
+            loss = F.cross_entropy(logits[idx], labels[idx])
+            acc = torch.sum(logits[idx].argmax(dim=1) == labels[idx]).item() / len(idx)
+            results += (loss, acc)
+    return results
 
 
 def generate_random_seeds(seed, nums):
