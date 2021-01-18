@@ -14,7 +14,7 @@
 | Dataset | Arxiv |
 | :-: | :-: |
 | DAGNN | 72.09 ± 0.25 |
-| DGL | 72.56 ± 0.19 |
+| DGL | 72.39 ± 0.23 |
 
 
 #### On Gowalla, Yelp2018 and Amanzon-Book
@@ -25,10 +25,10 @@ Gowalla, Yelp2018 and Amanzon-Book are datasets in the filed of recommendation s
 | Dataset | Gowalla | Yelp2018 | Amanzon-Book |
 | :-: | :-: | :-: | :-: |
 | NGCF | 0.1556 | 0.0543 | 0.0313 |
-| DAGNN(DGL) | 0.1792 | 0.0588 | 0.0396 |
+| DAGNN(DGL) | 0.1792 | 0.0598 | 0.0408 |
 
 ##### NDCG
 | Dataset | Gowalla | Yelp2018 | Amanzon-Book |
 | :-: | :-: | :-: | :-: |
 | NGCF | 0.1327 | 0.0477 | 0.0263 |
-| DAGNN(DGL) | 0.1507 | 0.0483 | 0.0305 |
+| DAGNN(DGL) | 0.1507 | 0.0493 | 0.0315 |
